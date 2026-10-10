@@ -1,8 +1,11 @@
+let tasksData = {};
+
 const todo = document.querySelector("#todo");
 const progress = document.querySelector("#progress");
 const done = document.querySelector("#done");
 
 let draggedElement = null;
+const columns = [todo, progress, done];
 
 const tasks = document.querySelectorAll(".task");
 
@@ -32,6 +35,13 @@ function addDragEventsOnColumn(column) {
 
     column.appendChild(draggedElement);
     column.classList.remove("hover-over");
+
+    columns.forEach((col) => {
+      const tasks = col.querySelectorAll(".task");
+      const count = col.querySelector(".right");
+
+      count.innerText = tasks.length;
+    });
   });
 }
 
@@ -66,8 +76,22 @@ addTaskBtn.addEventListener("click", () => {
             <button>Delete</button>`;
 
   todo.appendChild(div);
-  div.addEventListener("drag",()=>{
-    draggedElement=div;
-  })
+
+  columns.forEach((col) => {
+    const tasks = col.querySelectorAll(".task");
+    const count = col.querySelector(".right");
+
+    tasksData[col.id] = tasks.map(t=>{
+        return{
+            title:t.querySelector("h2").innerText,
+            desc:t.querySelector("p").innerText
+        }
+    })
+    count.innerText = tasks.length;
+  });
+
+  div.addEventListener("drag", () => {
+    draggedElement = div;
+  });
   modal.classList.remove("active");
 });
